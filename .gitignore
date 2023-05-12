@@ -1,1 +1,3 @@
 .vscode/*
+remote-shell
+*.o
