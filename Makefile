@@ -1,13 +1,13 @@
 CC = gcc
 CFLAGS = -g
 
-OBJECTS = main.o
+SERVER_OBJECTS = server.o
 HEADERS = 
 
 all: server
 
-server: $(OBJECTS)
-	$(CC) $(CFLAGS) main.o -o server
+server: $(SERVER_OBJECTS)
+	$(CC) $(CFLAGS) $(SERVER_OBJECTS) -o server
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
