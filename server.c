@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <sys/ioctl.h>
 
 #define PORT 9991
 #define QUEUE_LENGTH 5
@@ -78,6 +79,8 @@ void *handle_connection(void *param) {
     dup2(slave_fd, 0);
     dup2(slave_fd, 1);
     dup2(slave_fd, 2);
+    setsid(); //set child process to session leader
+    ioctl(0, TIOCSCTTY, 1);  // 
     char *shell = getpwuid(geteuid())->pw_shell;
     char *argv[] = {shell, NULL};
     execvp(shell, argv);
