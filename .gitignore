@@ -1,3 +1,5 @@
 .vscode/*
 remote-shell
+server
+client
 *.o
