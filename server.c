@@ -80,7 +80,7 @@ void *handle_connection(void *param) {
     dup2(slave_fd, 1);
     dup2(slave_fd, 2);
     setsid(); //set child process to session leader
-    ioctl(0, TIOCSCTTY, 1);  // 
+    ioctl(0, TIOCSCTTY, 1);  //make the pseudo terminal the controlling terminal
     char *shell = getpwuid(geteuid())->pw_shell;
     char *argv[] = {shell, NULL};
     execvp(shell, argv);
