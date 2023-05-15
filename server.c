@@ -12,7 +12,7 @@
 #include <pwd.h>
 #include <sys/ioctl.h>
 
-#define PORT 9991
+#define DEFAULT_PORT 9991
 #define QUEUE_LENGTH 5
 
 extern char **environ;
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   struct sockaddr_in server_addr = {0};
   server_addr.sin_addr.s_addr = INADDR_ANY;
   server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(PORT);
+  server_addr.sin_port = htons(DEFAULT_PORT);
 
   int reuse = 1;
   setsockopt(master_sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
