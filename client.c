@@ -51,7 +51,7 @@ void *read_thread(void *param) {
   int client_socket = (int)param;
   char buf = 0;
   while(read(client_socket, &buf, 1) > 0) {
-    printf("%c", buf);
+    write(1, &buf, 1);
   }
 }
 
