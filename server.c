@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 
 #define DEFAULT_PORT 9991
 #define QUEUE_LENGTH 5
@@ -25,6 +26,7 @@ struct term_thread_info {
 void *write_handle_thread(void *);
 void *read_handle_thread(void *);
 void *handle_connection(void *);
+void shellExitHandler(int param);
 
 
 int main(int argc, char **argv) {
@@ -51,6 +53,15 @@ int main(int argc, char **argv) {
     perror("listen error");
   }
 
+
+  //register child process death handler
+  struct sigaction shellExitAction;
+  shellExitAction.sa_handler = &shellExitHandler;
+  sigemptyset(&shellExitAction.sa_mask);
+  shellExitAction.sa_flags = SA_RESTART;
+  int error = sigaction(SIGCHLD, &shellExitAction, NULL);
+
+
   while (1) {
     //accept
     struct sockaddr_in client_addr = {0};
@@ -76,6 +87,7 @@ void *handle_connection(void *param) {
   }
   if (fork() == 0) {
     close(term_fd);
+    close(client_sock);
     dup2(slave_fd, 0);
     dup2(slave_fd, 1);
     dup2(slave_fd, 2);
@@ -116,5 +128,15 @@ void *write_handle_thread(void *param) {
   char buf = 0;
   while (read(info->term_fd, &buf, 1) > 0) {
     write(info->client_socket, &buf, 1);
+  }
+}
+
+
+void shellExitHandler(int param) {
+  unsigned int pid;
+  int status;
+  while (pid = waitpid(-1, &status, 0) > 0) {
+    //printf("child process %u dead\n");
+    //terminate assosciated client_socket here
   }
 }
